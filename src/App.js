@@ -5,6 +5,7 @@ import Resizer from 'react-image-file-resizer'
 function App() {
   const [selectedImage, setSelectedImage] = useState('')
   const inputRef = useRef()
+  const [maxHeightOrWidth, setMaxHeightOrWidth] = useState(null)
 
   function fileChangedHandler(event) {
     let fileInput = false
@@ -15,8 +16,8 @@ function App() {
       try {
         Resizer.imageFileResizer(
           event.target.files[0],
-          1000,
-          1000,
+          maxHeightOrWidth || 1000,
+          maxHeightOrWidth || 1000,
           'JPEG',
           100,
           0,
@@ -37,6 +38,7 @@ function App() {
   function resetInput() {
     setSelectedImage('')
     inputRef.current.value = null
+    setMaxHeightOrWidth(null)
   }
 
   function handleSubmit(e) {
@@ -50,6 +52,15 @@ function App() {
     <>
       <form className={styles.newSolutionContainer} onSubmit={handleSubmit}>
         <p>Select a photo to upload</p>
+        <p>
+          <label style={{ fontSize: '0.7rem' }}>Select max width/height: 
+            <input style={{ margin: '0 6px' }} type='number' min='500' max='8000' step='500' onChange={(e) => {
+              resetInput()
+              setMaxHeightOrWidth(e.target.value)
+            }} />
+            px
+          </label>
+        </p>
         <input ref={inputRef} type='file' onChange={fileChangedHandler} accept='image/*' />
         {selectedImage && (
           <>
@@ -59,7 +70,7 @@ function App() {
             >Remove</button>
 
             <div className={styles.imageContainer}>
-              <img src={selectedImage} alt='Uploaded image' className={styles.image} />
+              <img src={selectedImage} alt='Uploaded' className={styles.image} />
             </div>
             <button
               style={{ color: 'green', fontWeight: 'bold' }}
